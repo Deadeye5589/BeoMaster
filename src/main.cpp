@@ -230,8 +230,8 @@ void loop(){
   }
   else myTimer--;
 
-  lv_bar_set_value(ui2_Bar1, myTimer, LV_ANIM_ON);
-  lv_bar_set_value(ui2_Bar2, 100-myTimer, LV_ANIM_ON);
+  lv_bar_set_value(ui2_SliderBottom, myTimer, LV_ANIM_ON);
+  lv_bar_set_value(ui2_SliderTop, 100-myTimer, LV_ANIM_ON);
 
   lv_timer_handler(); /* let the GUI do its work */
   delay(5);

@@ -33,8 +33,8 @@ lv_obj_t * ui____initial_actions0;
 #if LV_COLOR_DEPTH != 16
     #error "LV_COLOR_DEPTH should be 16bit to match SquareLine Studio's settings"
 #endif
-#if LV_COLOR_16_SWAP !=0
-    #error "LV_COLOR_16_SWAP should be 0 to match SquareLine Studio's settings"
+#if LV_COLOR_16_SWAP !=1
+    #error "LV_COLOR_16_SWAP should be 1 to match SquareLine Studio's settings"
 #endif
 
 ///////////////////// ANIMATIONS ////////////////////
@@ -195,7 +195,7 @@ void ui_Screen1_screen_init(void)
     lv_obj_set_x(ui_varAmpLevel, -70);
     lv_obj_set_y(ui_varAmpLevel, 0);
     lv_obj_set_align(ui_varAmpLevel, LV_ALIGN_CENTER);
-    lv_label_set_text(ui_varAmpLevel, "0");
+    lv_label_set_text(ui_varAmpLevel, "00");
     lv_obj_clear_flag(ui_varAmpLevel, LV_OBJ_FLAG_PRESS_LOCK | LV_OBJ_FLAG_CLICK_FOCUSABLE | LV_OBJ_FLAG_GESTURE_BUBBLE |
                       LV_OBJ_FLAG_SNAPPABLE | LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_SCROLL_ELASTIC | LV_OBJ_FLAG_SCROLL_MOMENTUM |
                       LV_OBJ_FLAG_SCROLL_CHAIN);     /// Flags
