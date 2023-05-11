@@ -3,8 +3,8 @@
 // LVGL version: 8.3.4
 // Project name: Right_Display
 
-#ifndef _RIGHT_DISPLAY_UI_H
-#define _RIGHT_DISPLAY_UI_H
+#ifndef _RIGHT_DISPLAY_ui2_H
+#define _RIGHT_DISPLAY_ui2_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -12,19 +12,44 @@ extern "C" {
 
 #include <lvgl.h>
 
-#include "ui2_events.h"
-extern lv_obj_t * ui2_Screen1;
-extern lv_obj_t * ui2_SliderBottom;
-extern lv_obj_t * ui2_SliderTop;
-extern lv_obj_t * ui2____initial_actions0;
+
+extern lv_obj_t *ui2_Screen1;
+extern lv_obj_t *ui2_VolTopSlider;
+extern lv_obj_t *ui2_VolBotSlider;
+extern lv_obj_t *ui2_Screen2;
+extern lv_obj_t *ui2_EQSlider1;
+extern lv_obj_t *ui2_EQSlider2;
+extern lv_obj_t *ui2_EQSlider3;
+extern lv_obj_t *ui2_EQSlider4;
+extern lv_obj_t *ui2_EQSlider5;
+extern lv_obj_t *ui2_EQSlider6;
+extern lv_obj_t *ui2_EQSlider7;
+extern lv_obj_t *ui2_EQSlider8;
+extern lv_obj_t *ui2_EQSlider9;
+extern lv_obj_t *ui2_EQSlider10;
+extern lv_obj_t *ui2_EQSlider11;
+extern lv_obj_t *ui2_EQSlider12;
+extern lv_obj_t *ui2_EQSlider13;
+extern lv_obj_t *ui2_EQSlider14;
+extern lv_obj_t *ui2_EQSlider15;
+extern lv_obj_t *ui2_EQSlider16;
+extern lv_obj_t *ui2_EQSlider17;
+extern lv_obj_t *ui2_EQSlider18;
+extern lv_obj_t *ui2_EQSlider19;
+extern lv_obj_t *ui2_EQSlider20;
+extern lv_obj_t *ui2_Screen3;
+extern lv_obj_t *ui2____initial_actions0;
 
 
-LV_IMG_DECLARE(ui2_img_display_off_png);    // assets\Display_off.png
-LV_IMG_DECLARE(ui2_img_display_bot_on_png);    // assets\Display_Bot_On.png
-LV_IMG_DECLARE(ui2_img_display_top_on_png);    // assets\Display_Top_On.png
+LV_IMG_DECLARE( ui2_img_display_right_vol_bg_png);   // assets\Display_Right_vol_bg.png
+LV_IMG_DECLARE( ui2_img_display_right_vol_bar_top_png);   // assets\Display_right_vol_bar_top.png
+LV_IMG_DECLARE( ui2_img_display_right_vol_bar_bot_png);   // assets\Display_right_vol_bar_bot.png
+LV_IMG_DECLARE( ui2_img_display_right_eq_bg_png);   // assets\Display_Right_eq_bg.png
+LV_IMG_DECLARE( ui2_img_display_right_eq_bar_png);   // assets\Display_Right_eq_bar.png
+LV_IMG_DECLARE( ui2_img_display_right_vu_bg_png);   // assets\Display_Right_VU_bg.png
 
 
-LV_FONT_DECLARE(ui2_font_Digitaled);
+LV_FONT_DECLARE( ui_font_Digitaled);
 
 
 void ui2_init(void);

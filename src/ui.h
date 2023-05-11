@@ -12,7 +12,7 @@ extern "C" {
 
 #include <lvgl.h>
 
-#include "ui_helpers.h"
+
 extern lv_obj_t *ui_Screen1;
 extern lv_obj_t *ui_KreisBG;
 extern lv_obj_t *ui_ArcLevel;

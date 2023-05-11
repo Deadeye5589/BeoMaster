@@ -4,6 +4,7 @@
 // Project name: AmpDisplay
 
 #include "ui.h"
+#include "ui_helpers.h"
 
 
 ///////////////////// VARIABLES ////////////////////
