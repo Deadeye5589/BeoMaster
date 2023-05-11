@@ -9,6 +9,7 @@
 uint8_t source = 0;
 long myTimer = 0;
 long myDirection= 0;
+uint8_t screenselected = 1;
 
 /*Define 1st Display Pins and Classes*/
 //#define GFX_BL 0
@@ -68,8 +69,13 @@ void my_disp2_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *colo
 
 
 void onEb1Clicked(EncoderButton& eb) {
-  Serial.print("eb1 clickCount: ");
-  Serial.println(eb.clickCount());
+ screenselected = !screenselected;
+ if (screenselected){
+  lv_scr_load(ui2_Screen1);
+ }  
+ else{
+  lv_scr_load(ui2_Screen2);
+ }   
 }
 
 /**
@@ -88,8 +94,7 @@ void onEb1Encoder(EncoderButton& eb) {
 
 
 void onEb2Clicked(EncoderButton& eb) {
-  Serial.print("eb2 clickCount: ");
-  Serial.println(eb.clickCount());
+
 }
 
 /**
@@ -200,6 +205,7 @@ void setup(){
     ui_init();
     lv_disp_set_default(disp2);
     ui2_init();
+    
 
     eb1 = new EncoderButton(16, 17, 18);
     eb2 = new EncoderButton(21, 20, 19);
@@ -230,8 +236,35 @@ void loop(){
   }
   else myTimer--;
 
-  lv_bar_set_value(ui2_VolTopSlider, myTimer, LV_ANIM_ON);
-  lv_bar_set_value(ui2_VolBotSlider, 100-myTimer, LV_ANIM_ON);
+
+
+  if (screenselected){
+   lv_bar_set_value(ui2_VolTopSlider, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_VolBotSlider, 100-myTimer, LV_ANIM_ON);
+  }  
+  else{
+   lv_bar_set_value(ui2_EQSlider1, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider2, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider3, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider4, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider5, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider6, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider7, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider8, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider9, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider10, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider11, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider12, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider13, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider14, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider15, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider16, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider17, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider18, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider19, myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider20, myTimer, LV_ANIM_ON);   
+  } 
+
 
   lv_timer_handler(); /* let the GUI do its work */
   delay(5);
