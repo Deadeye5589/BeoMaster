@@ -90,18 +90,26 @@ void onEb1Encoder(EncoderButton& eb) {
   else if(encsource < 0){
     encsource = 2;
   }
+  //Select USB inputs
   if(encsource == 2){
-    digitalWrite(BT_RST, LOW);
-  } 
-   else{
     digitalWrite(BT_RST, HIGH);
-  }     
+    dsp_i2c_select_source(true);
+  } 
+  //Select BT input
+  else if(encsource==1){
+    digitalWrite(BT_RST, LOW);
+    dsp_i2c_select_source(true);
+  }
+  //Select Line input
+  else{
+    dsp_i2c_select_source(false);
+  }          
   lv_roller_set_selected(ui_varRoller, encsource, LV_ANIM_ON);
 }
 
 
 void onEb2Clicked(EncoderButton& eb) {
-
+  
 }
 
 
@@ -255,7 +263,7 @@ void setup(){
     gpio_enable_bt(true);
     delay(2500);
 
-    gpio_enable_amp(true); 
+    gpio_enable_amp(false); 
 
     dsp_i2c_init();
     
@@ -281,8 +289,8 @@ void loop(){
 
 
   if (screenselected){
-   lv_bar_set_value(ui2_VolTopSlider, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_VolBotSlider, 100-myTimer, LV_ANIM_ON);
+   lv_bar_set_value(ui2_VolTopSlider, 100 + dsp_i2c_read_levelmeter(true), LV_ANIM_ON);
+   lv_bar_set_value(ui2_VolBotSlider, 100 + dsp_i2c_read_levelmeter(false), LV_ANIM_ON);
   }  
   else{
    lv_bar_set_value(ui2_EQSlider1, myTimer, LV_ANIM_ON);

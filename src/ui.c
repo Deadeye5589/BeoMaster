@@ -128,6 +128,7 @@ lv_obj_set_style_bg_opa(ui_KreisLCD, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_varRoller = lv_roller_create(ui_Screen1);
 lv_roller_set_options( ui_varRoller, "Line\nBT\nUSB", LV_ROLLER_MODE_INFINITE );
+lv_roller_set_selected(ui_varRoller, 2, false);
 lv_obj_set_width( ui_varRoller, 60);
 lv_obj_set_height( ui_varRoller, 90);
 lv_obj_set_x( ui_varRoller, 106 );

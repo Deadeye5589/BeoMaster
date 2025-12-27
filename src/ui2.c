@@ -54,7 +54,7 @@ lv_obj_clear_flag( ui2_Screen1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 lv_obj_set_style_bg_img_src( ui2_Screen1, &ui2_img_display_right_vol_bg_png, LV_PART_MAIN | LV_STATE_DEFAULT );
 
 ui2_VolTopSlider = lv_slider_create(ui2_Screen1);
-lv_slider_set_value( ui2_VolTopSlider, 80, LV_ANIM_OFF);
+lv_slider_set_value( ui2_VolTopSlider, 0, LV_ANIM_OFF);
 if (lv_slider_get_mode(ui2_VolTopSlider)==LV_SLIDER_MODE_RANGE ) lv_slider_set_left_value( ui2_VolTopSlider, 3, LV_ANIM_OFF);
 lv_obj_set_width( ui2_VolTopSlider, 284);
 lv_obj_set_height( ui2_VolTopSlider, 30);
@@ -72,7 +72,7 @@ lv_obj_set_style_bg_color(ui2_VolTopSlider, lv_color_hex(0xFFFFFF), LV_PART_KNOB
 lv_obj_set_style_bg_opa(ui2_VolTopSlider, 0, LV_PART_KNOB| LV_STATE_DEFAULT);
 
 ui2_VolBotSlider = lv_slider_create(ui2_Screen1);
-lv_slider_set_value( ui2_VolBotSlider, 90, LV_ANIM_OFF);
+lv_slider_set_value( ui2_VolBotSlider, 0, LV_ANIM_OFF);
 if (lv_slider_get_mode(ui2_VolBotSlider)==LV_SLIDER_MODE_RANGE ) lv_slider_set_left_value( ui2_VolBotSlider, 0, LV_ANIM_OFF);
 lv_obj_set_width( ui2_VolBotSlider, 284);
 lv_obj_set_height( ui2_VolBotSlider, 30);
