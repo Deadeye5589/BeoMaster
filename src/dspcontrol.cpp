@@ -363,7 +363,7 @@ void dsp_i2c_read_equilizer(bool left_notright){
   Wire1.write(transmitbuffer, 2);
   Wire1.endTransmission(false);
   //Wait 2 DSP cycles to have correct values
-  delay(10);
+  delay(1);
   Wire1.requestFrom(DSP_ADRESS,3);
   //Read Gen1x trap value register
   readbuffer[0]=Wire1.read();
@@ -371,8 +371,10 @@ void dsp_i2c_read_equilizer(bool left_notright){
   readbuffer[2]= Wire1.read();
   Wire1.endTransmission();
 
-  readout=(readbuffer[0]<<16||readbuffer[1]<<8||readbuffer[2]);
-  eqvalues[i]=(readout / 524288)*100;
+  readout = readout | (readbuffer[0]<<16);
+  readout = readout | (readbuffer[1]<<8);
+  readout = readout | (readbuffer[2]);
+  eqvalues[i]=(readout / 524288.0f)*100;
  }
 
 return;
