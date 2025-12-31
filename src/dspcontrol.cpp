@@ -27,6 +27,46 @@
 #define RIGHT_VOL_REG3_HI 0x02
 #define RIGHT_VOL_REG3_LO 0x12
 
+static uint8_t LEFT_EQ_LO_REG[7]={
+  0xBA,
+  0x62,
+  0x0A,
+  0xB2,
+  0x5A,
+  0x02,
+  0xAA
+};
+
+static uint8_t LEFT_EQ_HI_REG[7]={
+  0x02,
+  0x03,
+  0x04,
+  0x04,
+  0x05,
+  0x06,
+  0x06
+};
+
+static uint8_t RIGHT_EQ_LO_REG[7]={
+  0x5E,
+  0x06,
+  0xAE,
+  0x56,
+  0xFE,
+  0xA6,
+  0x4E
+};
+
+static uint8_t RIGHT_EQ_HI_REG[7]={
+  0x07,
+  0x08,
+  0x08,
+  0x09,
+  0x09,
+  0x0A,
+  0x0B
+};
+
 
 // Values for Audio Gain from 0 to -100 dB as logarithmic progression
 static uint8_t dsp_volume[101][4]={
@@ -132,6 +172,8 @@ static uint8_t dsp_volume[101][4]={
   {0x00, 0x72, 0x14, 0x83},
   {0x00, 0x80, 0x00, 0x00}
 };
+
+int8_t eqvalues[7]={0, 0, 0, 0, 0, 0, 0};
 
 // Inializes the I2C bus on pins PA14 and PA15 
 void dsp_i2c_init(void){
@@ -298,6 +340,40 @@ int8_t dsp_i2c_read_levelmeter(bool left_notright){
   }
 }
 
-int8_t dps_i2c_read_equilizer(){
- return 1;
+void dsp_i2c_read_equilizer(bool left_notright){
+ byte transmitbuffer[4]={0x08, 0x1A, 0x00, 0x00};    //I2C commands that will be send to the DSP
+ byte readbuffer[3]={0x00, 0x00, 0x00};
+
+ for(int8_t i=0; i<6; i++){
+   uint32_t readout = 0; 
+   if(left_notright){
+    transmitbuffer[2]=LEFT_EQ_HI_REG[i];
+    transmitbuffer[3]=LEFT_EQ_LO_REG[i];
+   }
+   else{
+    transmitbuffer[2]=RIGHT_EQ_HI_REG[i];
+    transmitbuffer[3]=RIGHT_EQ_LO_REG[i];
+   }
+
+  Wire1.beginTransmission(DSP_ADRESS);
+  // transmitt buffer
+  Wire1.write(transmitbuffer, 4);
+  Wire1.endTransmission();
+  Wire1.beginTransmission(DSP_ADRESS);
+  Wire1.write(transmitbuffer, 2);
+  Wire1.endTransmission(false);
+  //Wait 2 DSP cycles to have correct values
+  delay(10);
+  Wire1.requestFrom(DSP_ADRESS,3);
+  //Read Gen1x trap value register
+  readbuffer[0]=Wire1.read();
+  readbuffer[1]=Wire1.read();
+  readbuffer[2]= Wire1.read();
+  Wire1.endTransmission();
+
+  readout=(readbuffer[0]<<16||readbuffer[1]<<8||readbuffer[2]);
+  eqvalues[i]=(readout / 524288)*100;
+ }
+
+return;
 }

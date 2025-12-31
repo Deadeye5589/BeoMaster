@@ -12,8 +12,6 @@
 #define INPUT_PU
 
 uint8_t source = 0;
-long myTimer = 0;
-long myDirection= 0;
 uint8_t screenselected = 1;
 
 /* Create Arduino GFX data busses and devices */
@@ -72,13 +70,25 @@ void my_disp2_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *colo
 
 
 void onEb1Clicked(EncoderButton& eb) {
- screenselected = !screenselected;
- if (screenselected){
-  lv_scr_load(ui2_Screen1);
- }  
- else{
-  lv_scr_load(ui2_Screen2);
- }   
+  screenselected++;
+  if(screenselected > 3)
+    screenselected = 1;
+  switch (screenselected)
+  {
+  case 1:
+    lv_scr_load(ui2_Screen1);
+    break;
+  case 2:
+    lv_scr_load(ui2_Screen2);
+    break;
+  case 3:
+    lv_scr_load(ui2_Screen3);
+    break;
+
+  default:
+    lv_scr_load(ui2_Screen1);
+    break;
+  }
 }
 
 /* A function to handle the 'left' encoder event */
@@ -275,44 +285,27 @@ void setup(){
 
 void loop(){
   
-  if(myTimer==100){
-    myDirection = 0;
-  }
-  if(myTimer==0){
-    myDirection = 1;
-  }
-  if(myDirection){
-    myTimer++;
-  }
-  else myTimer--;
-
-
-
-  if (screenselected){
+  if (screenselected==1){
    lv_bar_set_value(ui2_VolTopSlider, 100 + dsp_i2c_read_levelmeter(true), LV_ANIM_ON);
    lv_bar_set_value(ui2_VolBotSlider, 100 + dsp_i2c_read_levelmeter(false), LV_ANIM_ON);
   }  
-  else{
-   lv_bar_set_value(ui2_EQSlider1, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider2, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider3, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider4, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider5, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider6, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider7, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider8, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider9, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider10, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider11, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider12, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider13, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider14, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider15, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider16, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider17, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider18, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider19, myTimer, LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider20, myTimer, LV_ANIM_ON);   
+  else if(screenselected==2){
+   dsp_i2c_read_equilizer(true);
+   lv_bar_set_value(ui2_EQSlider1, eqvalues[0], LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider2, eqvalues[1], LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider3, eqvalues[2], LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider4, eqvalues[3], LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider5, eqvalues[4], LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider6, eqvalues[5], LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider7, eqvalues[6], LV_ANIM_ON);
+   dsp_i2c_read_equilizer(false);
+   lv_bar_set_value(ui2_EQSlider8, eqvalues[6], LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider9, eqvalues[5], LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider10, eqvalues[4], LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider11, eqvalues[3], LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider12, eqvalues[2], LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider13, eqvalues[1], LV_ANIM_ON);
+   lv_bar_set_value(ui2_EQSlider14, eqvalues[0], LV_ANIM_ON);
   } 
 
   lv_timer_handler(); /* let the GUI do its work */
