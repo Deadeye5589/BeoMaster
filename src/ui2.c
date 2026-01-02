@@ -36,7 +36,6 @@ lv_obj_t * ui2_EQSlider14;
 void ui2_Screen3_screen_init(void);
 lv_obj_t * ui2_Screen3;
 lv_obj_t * ui2_Roller2;
-lv_obj_t * ui2_Label2;
 lv_obj_t * ui2_Label1;
 lv_obj_t * ui2_Label4;
 lv_obj_t * ui2____initial_actions0;

@@ -37,6 +37,7 @@ EncoderButton *eb2; //(16, 17, 18);
 
 volatile int8_t encsource = 0;
 volatile int8_t volsource = 0;
+volatile int8_t encoder_resulution = 0;
 
 
 /* Display flushing 1st display */
@@ -93,7 +94,11 @@ void onEb1Clicked(EncoderButton& eb) {
 
 /* A function to handle the 'left' encoder event */
 void onEb1Encoder(EncoderButton& eb) {
-  encsource += eb.increment();
+  //We get two increments per encoder click. Therefore we ignore half of the increments
+  encoder_resulution -= eb.increment();
+  if(encoder_resulution % 2 == 0)
+   encsource += eb.increment();
+
   if (encsource > 2){
     encsource = 0;
   }
@@ -145,7 +150,11 @@ void onEb2LongClick(EncoderButton& eb) {
 
 /* A function to handle the 'right' encoder event */
 void onEb2Encoder(EncoderButton& eb) {
-  volsource += eb.increment();
+
+  encoder_resulution += eb.increment();
+  if(encoder_resulution % 2 == 0)
+      volsource += eb.increment();
+
   if(volsource > 100){
     volsource = 100;
   }

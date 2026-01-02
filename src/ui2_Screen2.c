@@ -12,7 +12,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_img_src(ui2_Screen2, &ui2_img_display_right_eq_bg_png, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui2_EQSlider1 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider1, 20, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider1, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider1) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider1, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider1, 10);
     lv_obj_set_height(ui2_EQSlider1, 105);
@@ -30,7 +30,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider1, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider2 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider2, 35, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider2, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider2) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider2, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider2, 10);
     lv_obj_set_height(ui2_EQSlider2, 105);
@@ -48,7 +48,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider2, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider3 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider3, 45, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider3, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider3) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider3, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider3, 10);
     lv_obj_set_height(ui2_EQSlider3, 105);
@@ -66,7 +66,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider3, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider4 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider4, 70, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider4, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider4) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider4, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider4, 10);
     lv_obj_set_height(ui2_EQSlider4, 105);
@@ -84,7 +84,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider4, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider5 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider5, 90, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider5, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider5) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider5, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider5, 10);
     lv_obj_set_height(ui2_EQSlider5, 105);
@@ -102,7 +102,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider5, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider6 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider6, 100, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider6, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider6) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider6, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider6, 10);
     lv_obj_set_height(ui2_EQSlider6, 105);
@@ -120,7 +120,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider6, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider7 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider7, 75, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider7, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider7) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider7, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider7, 10);
     lv_obj_set_height(ui2_EQSlider7, 105);
@@ -138,7 +138,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider7, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider8 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider8, 55, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider8, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider8) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider8, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider8, 10);
     lv_obj_set_height(ui2_EQSlider8, 105);
@@ -156,7 +156,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider8, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider9 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider9, 30, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider9, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider9) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider9, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider9, 10);
     lv_obj_set_height(ui2_EQSlider9, 105);
@@ -174,7 +174,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider9, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider10 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider10, 10, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider10, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider10) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider10, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider10, 10);
     lv_obj_set_height(ui2_EQSlider10, 105);
@@ -192,7 +192,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider10, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider11 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider11, 15, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider11, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider11) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider11, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider11, 10);
     lv_obj_set_height(ui2_EQSlider11, 105);
@@ -210,7 +210,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider11, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider12 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider12, 10, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider12, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider12) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider12, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider12, 10);
     lv_obj_set_height(ui2_EQSlider12, 105);
@@ -228,7 +228,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider12, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider13 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider13, 20, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider13, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider13) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider13, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider13, 10);
     lv_obj_set_height(ui2_EQSlider13, 105);
@@ -246,7 +246,7 @@ void ui2_Screen2_screen_init(void)
     lv_obj_set_style_bg_opa(ui2_EQSlider13, 0, LV_PART_KNOB | LV_STATE_DEFAULT);
 
     ui2_EQSlider14 = lv_slider_create(ui2_Screen2);
-    lv_slider_set_value(ui2_EQSlider14, 40, LV_ANIM_OFF);
+    lv_slider_set_value(ui2_EQSlider14, 0, LV_ANIM_OFF);
     if(lv_slider_get_mode(ui2_EQSlider14) == LV_SLIDER_MODE_RANGE) lv_slider_set_left_value(ui2_EQSlider14, 0, LV_ANIM_OFF);
     lv_obj_set_width(ui2_EQSlider14, 10);
     lv_obj_set_height(ui2_EQSlider14, 105);

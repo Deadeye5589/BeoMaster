@@ -3,7 +3,7 @@
 // LVGL version: 8.3.4
 // Project name: Right_Display
 
-#include "ui2.h"
+#include "ui.h"
 
 #ifndef LV_ATTRIBUTE_MEM_ALIGN
     #define LV_ATTRIBUTE_MEM_ALIGN

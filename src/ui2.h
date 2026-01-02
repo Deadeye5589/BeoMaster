@@ -40,7 +40,6 @@ extern lv_obj_t * ui2_EQSlider14;
 void ui2_Screen3_screen_init(void);
 extern lv_obj_t * ui2_Screen3;
 extern lv_obj_t * ui2_Roller2;
-extern lv_obj_t * ui2_Label2;
 extern lv_obj_t * ui2_Label1;
 extern lv_obj_t * ui2_Label4;
 extern lv_obj_t * ui2____initial_actions0;
