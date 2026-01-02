@@ -9,11 +9,7 @@
 #include "pico_rosc.h"
 #include "dspcontrol.h"
 #include "pico-ws2812/ws2812.h"
-
-#define INPUT_PU
-
-uint8_t source = 0;
-uint8_t screenselected = 1;
+#include "memory.h"
 
 /* Create Arduino GFX data busses and devices */
 Arduino_DataBus *bus = new Arduino_RPiPicoSPI(DISP_DC1 /* DC */, DISP_CS1 /* CS */, DISP_CLK1 /* SCK */, DISP_DIN1 /* MOSI */, UINT8_MAX /* MISO */, spi1 /* spi */);
@@ -36,14 +32,15 @@ static lv_disp_drv_t disp_drv2;
 EncoderButton *eb1; //(20, 21, 22);
 EncoderButton *eb2; //(16, 17, 18);
 
-volatile int8_t encsource = 0;
-volatile int8_t volsource = 0;
 volatile int8_t encoder_resulution = 0;
 
+
+/* PIO based WS2812 driver */
 const uint NEOPIXELIO = LED; // Define your GPIO pin
 const int NUMNEOPIXELS = 1; // Define number of neopixels
 
 WS2812 neopixel = WS2812(NUMNEOPIXELS, NEOPIXELIO); // Create your instance of the library
+
 
 /* Display flushing 1st display */
 void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p){
@@ -76,10 +73,10 @@ void my_disp2_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *colo
 
 
 void onEb1Clicked(EncoderButton& eb) {
-  screenselected++;
-  if(screenselected > 3)
-    screenselected = 1;
-  switch (screenselected)
+  memory.screen_selected++;
+  if(  memory.screen_selected > 3)
+      memory.screen_selected = 1;
+  switch (memory.screen_selected)
   {
   case 1:
     lv_scr_load(ui2_Screen1);
@@ -97,34 +94,59 @@ void onEb1Clicked(EncoderButton& eb) {
   }
 }
 
-/* A function to handle the 'left' encoder event */
+/* A function to handle the 'right side' encoder event 
+ Normall used to select source on left display, but in case
+ the settings screen is select the same encoder will cycle 
+ trough the settings instead */
 void onEb1Encoder(EncoderButton& eb) {
-  //We get two increments per encoder click. Therefore we ignore half of the increments
-  encoder_resulution -= eb.increment();
-  if(encoder_resulution % 2 == 0)
-   encsource += eb.increment();
 
-  if (encsource > 2){
-    encsource = 0;
+  if(memory.screen_selected==3){
+    encoder_resulution += eb.increment();
+    if(encoder_resulution % 2 == 0){
+    memory.select_setting += eb.increment();
+    }
+    if (memory.select_setting >= 6){
+      memory.select_setting = 6;
+    }
+    else if(memory.select_setting <= 0){
+      memory.select_setting = 0;
+    }
+    lv_roller_set_selected(ui2_Roller2, memory.select_setting, LV_ANIM_ON);
   }
-  else if(encsource < 0){
-    encsource = 2;
+  
+  else {
+    //We get two increments per encoder click. Therefore we ignore half of the increments
+    encoder_resulution += eb.increment();
+    if(encoder_resulution % 2 == 0){
+    memory.source_selected += eb.increment();
+    }
+    if (memory.source_selected > 2){
+      memory.source_selected = 0;
+    }
+    else if(memory.source_selected < 0){
+      memory.source_selected = 2;
+    }
+    //Select USB inputs
+    if(memory.source_selected == 2){
+      digitalWrite(BT_RST, HIGH);
+      dsp_i2c_select_source(true);
+      neopixel.fillPixelColor(127,63,0);
+    } 
+    //Select BT input
+    else if(memory.source_selected==1){
+      digitalWrite(BT_RST, LOW);
+      dsp_i2c_select_source(true);
+      neopixel.fillPixelColor(0,0,127);
+
+    }
+    //Select Line input
+    else{
+      dsp_i2c_select_source(false);
+      neopixel.fillPixelColor(0,127,0);
+    }
+    neopixel.show();          
+    lv_roller_set_selected(ui_varRoller, memory.source_selected, LV_ANIM_ON);
   }
-  //Select USB inputs
-  if(encsource == 2){
-    digitalWrite(BT_RST, HIGH);
-    dsp_i2c_select_source(true);
-  } 
-  //Select BT input
-  else if(encsource==1){
-    digitalWrite(BT_RST, LOW);
-    dsp_i2c_select_source(true);
-  }
-  //Select Line input
-  else{
-    dsp_i2c_select_source(false);
-  }          
-  lv_roller_set_selected(ui_varRoller, encsource, LV_ANIM_ON);
 }
 
 
@@ -141,6 +163,8 @@ void onEb2LongClick(EncoderButton& eb) {
   gpio_enable_dsp(false);
   gpio_power_down(true);
   gpio_disable_display();
+  neopixel.fillPixelColor(5,0,0);
+  neopixel.show();
 
   sleep_run_from_xosc();
   //we stay here until our wakeup signal was triggered
@@ -158,34 +182,34 @@ void onEb2Encoder(EncoderButton& eb) {
 
   encoder_resulution += eb.increment();
   if(encoder_resulution % 2 == 0)
-      volsource += eb.increment();
+      memory.set_volume += eb.increment();
 
-  if(volsource > 100){
-    volsource = 100;
+  if(memory.set_volume > 100){
+    memory.set_volume = 100;
   }
-  if(volsource < 0){
-    volsource = 0;
+  if(memory.set_volume < 0){
+    memory.set_volume = 0;
   }
   char buf[4];
-  if(volsource == 100){
+  if(memory.set_volume == 100){
     sprintf(buf, "%02d", 0);
     lv_label_set_text(ui_varAmpLevel, buf);
     lv_obj_set_style_opa(ui_ImageMute, 255, 0);
   }
-  else if (volsource==0){
+  else if (memory.set_volume==0){
     sprintf(buf, "%d", 0);
     lv_label_set_text(ui_varAmpLevel, buf);
   }
   else{
     lv_obj_set_style_opa(ui_ImageMute, 0, 0);
-    sprintf(buf, "%02d", volsource*-1);
+    sprintf(buf, "%02d", memory.set_volume*-1);
     lv_label_set_text(ui_varAmpLevel, buf);
   }
-  lv_arc_set_value(ui_ArcLevel, 100-volsource);
-  sprintf(buf, "%02d", volsource);
+  lv_arc_set_value(ui_ArcLevel, 100-memory.set_volume);
+  sprintf(buf, "%02d", memory.set_volume);
   lv_label_set_text(ui_varTemperatur,buf);
 
-  dsp_i2c_set_volume(volsource);
+  dsp_i2c_set_volume(memory.set_volume);
 
 }
 
@@ -301,11 +325,11 @@ void setup(){
 
 void loop(){
   
-  if (screenselected==1){
+  if (memory.screen_selected==1){
    lv_bar_set_value(ui2_VolTopSlider, 100 + dsp_i2c_read_levelmeter(true), LV_ANIM_ON);
    lv_bar_set_value(ui2_VolBotSlider, 100 + dsp_i2c_read_levelmeter(false), LV_ANIM_ON);
   }  
-  else if(screenselected==2){
+  else if(memory.screen_selected==2){
    dsp_i2c_read_equilizer(true);
    lv_bar_set_value(ui2_EQSlider1, eqvalues[0], LV_ANIM_ON);
    lv_bar_set_value(ui2_EQSlider2, eqvalues[1], LV_ANIM_ON);
@@ -329,7 +353,4 @@ void loop(){
 
   eb1->update();
   eb2->update();
-
-  neopixel.fillPixelColor(0,0,127);
-  neopixel.show();
 }
