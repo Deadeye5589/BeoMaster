@@ -35,8 +35,8 @@ void gpio_default (){
     pinMode(BT_MFB, OUTPUT);
     digitalWrite(BT_MFB, HIGH);
 
-    pinMode(WS2812, OUTPUT);
-    digitalWrite(WS2812, LOW);
+    pinMode(LED, OUTPUT);
+    digitalWrite(LED, LOW);
 
     // pinMode(DISP_RST1, OUTPUT);
     // digitalWrite(DISP_RST1 , LOW);

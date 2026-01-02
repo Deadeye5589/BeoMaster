@@ -8,6 +8,7 @@
 #include "pico_sleep.h"
 #include "pico_rosc.h"
 #include "dspcontrol.h"
+#include "pico-ws2812/ws2812.h"
 
 #define INPUT_PU
 
@@ -39,6 +40,10 @@ volatile int8_t encsource = 0;
 volatile int8_t volsource = 0;
 volatile int8_t encoder_resulution = 0;
 
+const uint NEOPIXELIO = LED; // Define your GPIO pin
+const int NUMNEOPIXELS = 1; // Define number of neopixels
+
+WS2812 neopixel = WS2812(NUMNEOPIXELS, NEOPIXELIO); // Create your instance of the library
 
 /* Display flushing 1st display */
 void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p){
@@ -285,6 +290,8 @@ void setup(){
     gpio_enable_amp(false); 
 
     dsp_i2c_init();
+
+    neopixel.begin();
     
 
     Serial.println("Setup done");
@@ -322,4 +329,7 @@ void loop(){
 
   eb1->update();
   eb2->update();
+
+  neopixel.fillPixelColor(0,0,127);
+  neopixel.show();
 }
