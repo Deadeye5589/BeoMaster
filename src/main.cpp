@@ -13,6 +13,9 @@
 #include "pico-ws2812/ws2812.h"
 #include "memory.h"
 
+volatile bool in_setup_function = 0;
+volatile int16_t setup_function_value = 0;
+
 /* Create Arduino GFX data busses and devices */
 Arduino_DataBus *bus = new Arduino_RPiPicoSPI(DISP_DC1 /* DC */, DISP_CS1 /* CS */, DISP_CLK1 /* SCK */, DISP_DIN1 /* MOSI */, UINT8_MAX /* MISO */, spi1 /* spi */);
 Arduino_GFX *gfx = new Arduino_ST7789(bus, DISP_RST1 /* RST */, 3 /* rotation */, true /* IPS */, 170, 320, 35, 0, 35, 0);
@@ -70,10 +73,15 @@ void my_disp2_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *colo
 
 
 void onEb1Clicked(EncoderButton& eb) {
+  if(memory.screen_selected == 1 || memory.screen_selected == 2 || (memory.screen_selected == 3 && memory.select_setting == 6)){
   memory.screen_selected++;
   if(  memory.screen_selected > 3)
       memory.screen_selected = 1;
   display_load_right_screen(memory.screen_selected);
+  }
+  else{
+    in_setup_function = !in_setup_function;
+  }
 }
 
 /* A function to handle the 'right side' encoder event 
@@ -81,8 +89,9 @@ void onEb1Clicked(EncoderButton& eb) {
  the settings screen is select the same encoder will cycle 
  trough the settings instead */
 void onEb1Encoder(EncoderButton& eb) {
+  char buf[4];
 
-  if(memory.screen_selected==3){
+  if(memory.screen_selected==3 && !in_setup_function){
     encoder_resulution += eb.increment();
     if(encoder_resulution % 2 == 0){
     memory.select_setting += eb.increment();
@@ -93,7 +102,149 @@ void onEb1Encoder(EncoderButton& eb) {
     else if(memory.select_setting <= 0){
       memory.select_setting = 0;
     }
+    
+    switch (memory.select_setting)
+    {
+    case 0:
+      lv_label_set_text(ui2_Label4, "Adjust Delay Left Channel");
+      setup_function_value = memory.delay_left;
+      sprintf(buf, "%02d", memory.delay_left);
+      lv_label_set_text(ui2_Label1, buf);
+    break;
+
+    case 1:
+      lv_label_set_text(ui2_Label4, "Adjust Delay Right Channel");
+      setup_function_value = memory.delay_right;
+      sprintf(buf, "%02d", memory.delay_right);
+      lv_label_set_text(ui2_Label1, buf); 
+    break;
+
+     case 2:
+      lv_label_set_text(ui2_Label4, "Adjust Delay Subwoofer");
+      setup_function_value = memory.delay_sub;
+      sprintf(buf, "%02d", memory.delay_sub);
+      lv_label_set_text(ui2_Label1, buf); 
+    break;
+
+    case 3:
+      lv_label_set_text(ui2_Label4, "Adjust Subwoofer Volume");
+      setup_function_value = memory.subwoofer_volume;
+      sprintf(buf, "%02d", memory.subwoofer_volume);
+      lv_label_set_text(ui2_Label1, buf); 
+    break;
+
+    case 4:
+      lv_label_set_text(ui2_Label4, "Invert Subwoofer Phase");
+      setup_function_value = memory.invert_subwoofer;
+      if(memory.invert_subwoofer)
+        lv_label_set_text(ui2_Label1, "0°");
+      else
+        lv_label_set_text(ui2_Label1, "-180°");
+    break;
+
+    case 5:
+      lv_label_set_text(ui2_Label4, "Mirror EQ Display");  
+      setup_function_value = memory.mirror_eq;
+      if(memory.mirror_eq)
+        lv_label_set_text(ui2_Label1, "True");
+      else
+        lv_label_set_text(ui2_Label1, "False"); 
+    break;
+    
+    default:
+      lv_label_set_text(ui2_Label4, "Adjust Settings"); 
+      lv_label_set_text(ui2_Label1, "Save");
+      break;
+    }
+
     lv_roller_set_selected(ui2_Roller2, memory.select_setting, LV_ANIM_ON);
+  }
+
+  else if(memory.screen_selected==3 && in_setup_function){
+    char buf[4];
+    encoder_resulution += eb.increment();
+    if(encoder_resulution % 2 == 0){
+      setup_function_value += eb.increment();
+    }
+    switch (memory.select_setting)
+    {
+    // Left channel delay
+    case 0:
+      if(setup_function_value > 500){
+        setup_function_value = 500;
+      }
+
+      if(setup_function_value < 1){
+          setup_function_value = 1;
+      }
+      memory.delay_left = setup_function_value;
+      sprintf(buf, "%02d", memory.delay_left);
+      lv_label_set_text(ui2_Label1, buf);
+      dsp_i2c_set_delay(1,memory.delay_left);
+      break;
+    // Right channel delay
+    case 1:
+      if(setup_function_value > 500){
+      setup_function_value = 500;
+      }
+
+      if(setup_function_value < 1){
+          setup_function_value = 1;
+      }
+      memory.delay_right = setup_function_value;
+      sprintf(buf, "%02d", memory.delay_right);
+      lv_label_set_text(ui2_Label1, buf);
+      dsp_i2c_set_delay(2,memory.delay_right);
+      break;
+    // Subwoofer delay
+    case 2:
+      if(setup_function_value > 500){
+         setup_function_value = 500;
+          }
+
+      if(setup_function_value < 1){
+             setup_function_value = 1;
+      }
+      memory.delay_sub = setup_function_value;
+      sprintf(buf, "%02d", memory.delay_sub);
+      lv_label_set_text(ui2_Label1, buf);
+      dsp_i2c_set_delay(3,memory.delay_sub);
+      break;
+    // Subwoofer volume
+    case 3:
+      if(setup_function_value > 100){
+      setup_function_value = 100;
+      }
+
+      if(setup_function_value < 0){
+          setup_function_value = 0;
+      }
+      memory.subwoofer_volume = setup_function_value;
+      sprintf(buf, "%02d", memory.subwoofer_volume);
+      lv_label_set_text(ui2_Label1, buf);
+      dsp_i2c_set_bass_volume(memory.subwoofer_volume);
+      break;
+    // Invert subwoofer phase
+    case 4:
+      memory.invert_subwoofer = !memory.invert_subwoofer;
+      if(memory.invert_subwoofer)
+        lv_label_set_text(ui2_Label1, "-180°");
+      else
+        lv_label_set_text(ui2_Label1, "0°");
+      dsp_i2c_set_subwoofer_phase(memory.invert_subwoofer);
+      break;
+    // Mirror EQ display
+    case 5:
+      memory.mirror_eq = !memory.mirror_eq;
+      if(memory.mirror_eq)
+        lv_label_set_text(ui2_Label1, "True");
+      else
+        lv_label_set_text(ui2_Label1, "False");
+      break;
+    
+    default:
+      break;
+    }
   }
   
   else {
@@ -169,7 +320,7 @@ void onEb2Encoder(EncoderButton& eb) {
   }
 
   display_set_volume_graphics(memory.set_volume);
-  dsp_i2c_set_volume(memory.set_volume);
+  dsp_i2c_set_volume(memory.set_volume, MAIN_VOL_REG);
 }
 
 /* Interupt if 230V is removed to avoid popping noise from speakers */
@@ -301,13 +452,24 @@ void loop(){
    lv_bar_set_value(ui2_EQSlider6, eqvalues[5], LV_ANIM_ON);
    lv_bar_set_value(ui2_EQSlider7, eqvalues[6], LV_ANIM_ON);
    dsp_i2c_read_equilizer(false);
-   lv_bar_set_value(ui2_EQSlider8, eqvalues[6], LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider9, eqvalues[5], LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider10, eqvalues[4], LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider11, eqvalues[3], LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider12, eqvalues[2], LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider13, eqvalues[1], LV_ANIM_ON);
-   lv_bar_set_value(ui2_EQSlider14, eqvalues[0], LV_ANIM_ON);
+   if(!memory.mirror_eq){
+    lv_bar_set_value(ui2_EQSlider8, eqvalues[6], LV_ANIM_ON);
+    lv_bar_set_value(ui2_EQSlider9, eqvalues[5], LV_ANIM_ON);
+    lv_bar_set_value(ui2_EQSlider10, eqvalues[4], LV_ANIM_ON);
+    lv_bar_set_value(ui2_EQSlider11, eqvalues[3], LV_ANIM_ON);
+    lv_bar_set_value(ui2_EQSlider12, eqvalues[2], LV_ANIM_ON);
+    lv_bar_set_value(ui2_EQSlider13, eqvalues[1], LV_ANIM_ON);
+    lv_bar_set_value(ui2_EQSlider14, eqvalues[0], LV_ANIM_ON);
+   }
+   else{
+    lv_bar_set_value(ui2_EQSlider8, eqvalues[0], LV_ANIM_ON);
+    lv_bar_set_value(ui2_EQSlider9, eqvalues[1], LV_ANIM_ON);
+    lv_bar_set_value(ui2_EQSlider10, eqvalues[2], LV_ANIM_ON);
+    lv_bar_set_value(ui2_EQSlider11, eqvalues[3], LV_ANIM_ON);
+    lv_bar_set_value(ui2_EQSlider12, eqvalues[4], LV_ANIM_ON);
+    lv_bar_set_value(ui2_EQSlider13, eqvalues[5], LV_ANIM_ON);
+    lv_bar_set_value(ui2_EQSlider14, eqvalues[6], LV_ANIM_ON);
+   }
   } 
 
   lv_timer_handler(); /* let the GUI do its work */

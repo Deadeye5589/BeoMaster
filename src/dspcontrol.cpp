@@ -1,31 +1,8 @@
 // Functions to control ADAU1701 DSP via I2C
-#include "gpiohandler.h"
 #include <Arduino.h>
 #include <Wire.h>
-
-#define DSP_ADRESS 0x34
-
-#define MAIN_VOL_REG 0x01
-#define SUB_VOL_REG 0x78
-#define INPUT_MUX_REG 0x00
-
-#define DELAY1_REG 0x54
-#define DELAY2_REG 0x55
-#define DELAY3_REG 0x56
-
-#define LEFT_VOL_REG1_HI 0x01
-#define LEFT_VOL_REG1_LO 0x8A
-#define LEFT_VOL_REG2_HI 0x01
-#define LEFT_VOL_REG2_LO 0xAE
-#define LEFT_VOL_REG3_HI 0x01
-#define LEFT_VOL_REG3_LO 0xB2
-
-#define RIGHT_VOL_REG1_HI 0x01
-#define RIGHT_VOL_REG1_LO 0xEA
-#define RIGHT_VOL_REG2_HI 0x02
-#define RIGHT_VOL_REG2_LO 0x0E
-#define RIGHT_VOL_REG3_HI 0x02
-#define RIGHT_VOL_REG3_LO 0x12
+#include "gpiohandler.h"
+#include "dspcontrol.h"
 
 static uint8_t LEFT_EQ_LO_REG[7]={
   0xBA,
@@ -187,7 +164,7 @@ void dsp_i2c_init(void){
 // Write the volume registers of the DSP
 // Input value is the current volume leve set via 
 // the left encoder
-void dsp_i2c_set_volume(int8_t level){
+void dsp_i2c_set_volume(int8_t level, int8_t dsp_write_reg){
 
   //Sanity check so we won't run out of our look up table array
   if (level < 0 || level > 101)
@@ -196,7 +173,7 @@ void dsp_i2c_set_volume(int8_t level){
   // create a tranmssion buffer for the IC2 sequence 
   // initalizes with full scale gain 
   // set register adress for left channel gain
-  byte buffer[6]={0x00, MAIN_VOL_REG, 0x00, 0x80, 0x00, 0x00};
+  byte buffer[6]={0x00, dsp_write_reg, 0x00, 0x80, 0x00, 0x00};
   // look up the desired volume
   buffer[2]=dsp_volume[100-level][0];
   buffer[3]=dsp_volume[100-level][1];
@@ -215,7 +192,7 @@ void dsp_i2c_set_volume(int8_t level){
   Wire1.endTransmission();
 }
 
-void dsp_i2c_set_bass_volume(int8_t level){
+void dsp_i2c_set_bass_volume(int16_t level){
 
 }
 
@@ -236,7 +213,7 @@ void dsp_i2c_select_source(bool digital_in){
 }
 
 
-void dsp_i2c_set_delay(int8_t channel, int8_t delay){
+void dsp_i2c_set_delay(int8_t channel, int16_t delay){
   byte buffer[6]={0x00, 0x00, 0x00, 0x00, 0x00, 0x01};
 
   //Left channel delay
@@ -254,11 +231,16 @@ void dsp_i2c_set_delay(int8_t channel, int8_t delay){
   else
    return;
 
+  buffer[5]=(uint8_t)(delay & 0xFF);
+  buffer[6]=(uint8_t)(delay >> 8) & 0xFF; 
+
+  for(int i=0; i<2; i++){
   // Base adress of the DSP = DSP_ADRESS)
   Wire1.beginTransmission(DSP_ADRESS);
   // transmitt buffer
   Wire1.write(buffer, 6);
   Wire1.endTransmission();
+  }
 
 }
 
@@ -378,4 +360,36 @@ void dsp_i2c_read_equilizer(bool left_notright){
  }
 
 return;
+}
+
+void dsp_i2c_set_subwoofer_phase(bool inverted){
+  byte transmitbuffer[7]={0x08, 0x10, 0x00, 0x00, 0x80, 0x00, 0x00};    //I2C commands that will be send to the DSP
+  if(inverted){
+    transmitbuffer[4]= 0xFF;
+  }
+  Wire1.beginTransmission(DSP_ADRESS);
+  // transmitt buffer
+  Wire1.write(transmitbuffer, 7);
+  Wire1.endTransmission();
+
+  //SaveWrite Command to DSP
+  transmitbuffer[0]= 0x08;
+  transmitbuffer[1]= 0x15;
+  transmitbuffer[2]= 0x00;
+  transmitbuffer[3]= 0x68;
+
+  Wire1.beginTransmission(DSP_ADRESS);
+  // transmitt buffer
+  Wire1.write(transmitbuffer, 4);
+  Wire1.endTransmission();
+
+  transmitbuffer[0]= 0x08;
+  transmitbuffer[1]= 0x1C;
+  transmitbuffer[2]= 0x00;
+  transmitbuffer[3]= 0x3C;
+
+  Wire1.beginTransmission(DSP_ADRESS);
+  // transmitt buffer
+  Wire1.write(transmitbuffer, 4);
+  Wire1.endTransmission();
 }

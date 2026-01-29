@@ -40,7 +40,8 @@ void ui2_Screen3_screen_init(void)
     lv_obj_set_x(ui2_Label1, -45);
     lv_obj_set_y(ui2_Label1, 14);
     lv_obj_set_align(ui2_Label1, LV_ALIGN_CENTER);
-    lv_label_set_text(ui2_Label1, "500");
+    lv_obj_set_style_text_color(ui2_Label1, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT );
+    lv_label_set_text(ui2_Label1, "Save");
     lv_obj_set_style_text_font(ui2_Label1, &ui_font_Digitaled, LV_PART_MAIN | LV_STATE_DEFAULT);
 
     ui2_Label4 = lv_label_create(ui2_Screen3);
@@ -49,7 +50,8 @@ void ui2_Screen3_screen_init(void)
     lv_obj_set_x(ui2_Label4, -43);
     lv_obj_set_y(ui2_Label4, -33);
     lv_obj_set_align(ui2_Label4, LV_ALIGN_CENTER);
-    lv_label_set_text(ui2_Label4, "Adjust Delay Subwoofer");
+    lv_obj_set_style_text_color(ui2_Label4, lv_color_hex(0xFFFFFF), LV_PART_MAIN | LV_STATE_DEFAULT );
+    lv_label_set_text(ui2_Label4, "Configure Settings");
     lv_obj_set_style_text_font(ui2_Label4, &lv_font_montserrat_10, LV_PART_MAIN | LV_STATE_DEFAULT);
 
 }
