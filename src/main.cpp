@@ -448,7 +448,7 @@ void setup(){
 
     Serial.println("Setup done");
 
-    gpio_enable_amp(false); 
+    gpio_enable_amp(true); 
   }
 }
 
