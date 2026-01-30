@@ -30,8 +30,7 @@
 extern int8_t eqvalues[7];
 
 void dsp_i2c_init(void);
-void dsp_i2c_set_volume(int8_t level, int8_t dsp_write_reg);
-void dsp_i2c_set_bass_volume(int16_t level);
+void dsp_i2c_set_volume(int8_t level, int8_t dsp_write_reg, bool mono_stereo);
 void dsp_i2c_select_source(bool digital_in);
 void dsp_i2c_set_delay(int8_t channel, int16_t delay);
 void dsp_i2c_set_subwoofer_phase(bool inverted);

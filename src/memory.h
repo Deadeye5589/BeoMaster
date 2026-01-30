@@ -24,9 +24,9 @@ extern struct savedata memory;
 void restore_settings(void);
 void restore_last_display_view(void);
 void restore_volume(void);
+void restore_sub_volume(void);
 void restore_source(void);
-void restore_delay(uint8_t channel);
-void restore_subwoofer_level(void);
+void restore_delay(void);
 void restore_subwoofer_phase(void);
 
 

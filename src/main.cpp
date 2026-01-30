@@ -96,6 +96,8 @@ void onEb1Encoder(EncoderButton& eb) {
     if(encoder_resulution % 2 == 0){
     memory.select_setting += eb.increment();
     }
+    else return;
+
     if (memory.select_setting >= 6){
       memory.select_setting = 6;
     }
@@ -129,17 +131,22 @@ void onEb1Encoder(EncoderButton& eb) {
     case 3:
       lv_label_set_text(ui2_Label4, "Adjust Subwoofer Volume");
       setup_function_value = memory.subwoofer_volume;
-      sprintf(buf, "%02d", memory.subwoofer_volume);
-      lv_label_set_text(ui2_Label1, buf); 
+      if(setup_function_value == 0){
+        lv_label_set_text(ui2_Label1, "0");
+      }
+      else{
+        sprintf(buf, "%02d", memory.subwoofer_volume*-1);
+        lv_label_set_text(ui2_Label1, buf);
+      }
     break;
 
     case 4:
       lv_label_set_text(ui2_Label4, "Invert Subwoofer Phase");
       setup_function_value = memory.invert_subwoofer;
       if(memory.invert_subwoofer)
-        lv_label_set_text(ui2_Label1, "0°");
-      else
         lv_label_set_text(ui2_Label1, "-180°");
+      else
+        lv_label_set_text(ui2_Label1, "0°");
     break;
 
     case 5:
@@ -166,6 +173,8 @@ void onEb1Encoder(EncoderButton& eb) {
     if(encoder_resulution % 2 == 0){
       setup_function_value += eb.increment();
     }
+    else return;
+
     switch (memory.select_setting)
     {
     // Left channel delay
@@ -219,10 +228,16 @@ void onEb1Encoder(EncoderButton& eb) {
       if(setup_function_value < 0){
           setup_function_value = 0;
       }
+
       memory.subwoofer_volume = setup_function_value;
-      sprintf(buf, "%02d", memory.subwoofer_volume);
-      lv_label_set_text(ui2_Label1, buf);
-      dsp_i2c_set_bass_volume(memory.subwoofer_volume);
+      if(memory.subwoofer_volume == 0){
+        lv_label_set_text(ui2_Label1, "0");
+      }
+      else{
+        sprintf(buf, "%02d", memory.subwoofer_volume*-1);
+        lv_label_set_text(ui2_Label1, buf);
+      }
+      dsp_i2c_set_volume(memory.subwoofer_volume, SUB_VOL_REG, 0);
       break;
     // Invert subwoofer phase
     case 4:
@@ -305,11 +320,13 @@ void onEb2LongClick(EncoderButton& eb) {
 }
 
 /* A function to handle the 'right' encoder event */
+
 void onEb2Encoder(EncoderButton& eb) {
 
   encoder_resulution += eb.increment();
   if(encoder_resulution % 2 == 0)
       memory.set_volume += eb.increment();
+  else return;
 
   if(memory.set_volume > 100){
     memory.set_volume = 100;
@@ -320,7 +337,7 @@ void onEb2Encoder(EncoderButton& eb) {
   }
 
   display_set_volume_graphics(memory.set_volume);
-  dsp_i2c_set_volume(memory.set_volume, MAIN_VOL_REG);
+  dsp_i2c_set_volume(memory.set_volume, MAIN_VOL_REG, 1);
 }
 
 /* Interupt if 230V is removed to avoid popping noise from speakers */
@@ -452,7 +469,7 @@ void loop(){
    lv_bar_set_value(ui2_EQSlider6, eqvalues[5], LV_ANIM_ON);
    lv_bar_set_value(ui2_EQSlider7, eqvalues[6], LV_ANIM_ON);
    dsp_i2c_read_equilizer(false);
-   if(!memory.mirror_eq){
+   if(memory.mirror_eq){
     lv_bar_set_value(ui2_EQSlider8, eqvalues[6], LV_ANIM_ON);
     lv_bar_set_value(ui2_EQSlider9, eqvalues[5], LV_ANIM_ON);
     lv_bar_set_value(ui2_EQSlider10, eqvalues[4], LV_ANIM_ON);

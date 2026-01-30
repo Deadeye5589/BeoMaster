@@ -164,7 +164,7 @@ void dsp_i2c_init(void){
 // Write the volume registers of the DSP
 // Input value is the current volume leve set via 
 // the left encoder
-void dsp_i2c_set_volume(int8_t level, int8_t dsp_write_reg){
+void dsp_i2c_set_volume(int8_t level, int8_t dsp_write_reg, bool mono_stereo){
 
   //Sanity check so we won't run out of our look up table array
   if (level < 0 || level > 101)
@@ -185,15 +185,13 @@ void dsp_i2c_set_volume(int8_t level, int8_t dsp_write_reg){
   Wire1.write(buffer, 6);
   Wire1.endTransmission();
 
-  // repeat same volume settings for rigth audio channel
+  if(mono_stereo){
+  // repeat same volume settings for rigth audio channel if stereo signal shall be regulated
   buffer[1]=MAIN_VOL_REG+0x01;
   Wire1.beginTransmission(DSP_ADRESS);
   Wire1.write(buffer, 6);
   Wire1.endTransmission();
-}
-
-void dsp_i2c_set_bass_volume(int16_t level){
-
+  }
 }
 
 
@@ -232,7 +230,7 @@ void dsp_i2c_set_delay(int8_t channel, int16_t delay){
    return;
 
   buffer[5]=(uint8_t)(delay & 0xFF);
-  buffer[6]=(uint8_t)(delay >> 8) & 0xFF; 
+  buffer[4]=(uint8_t)(delay >> 8) & 0xFF; 
 
   for(int i=0; i<2; i++){
   // Base adress of the DSP = DSP_ADRESS)
