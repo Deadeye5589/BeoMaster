@@ -173,7 +173,7 @@ void dsp_i2c_set_volume(int8_t level, int8_t dsp_write_reg, bool mono_stereo){
   // create a tranmssion buffer for the IC2 sequence 
   // initalizes with full scale gain 
   // set register adress for left channel gain
-  byte buffer[6]={0x00, dsp_write_reg, 0x00, 0x80, 0x00, 0x00};
+  byte buffer[6]={0x00, (u_int8_t)dsp_write_reg, 0x00, 0x80, 0x00, 0x00};
   // look up the desired volume
   buffer[2]=dsp_volume[100-level][0];
   buffer[3]=dsp_volume[100-level][1];
@@ -187,6 +187,7 @@ void dsp_i2c_set_volume(int8_t level, int8_t dsp_write_reg, bool mono_stereo){
 
   if(mono_stereo){
   // repeat same volume settings for rigth audio channel if stereo signal shall be regulated
+  delay(1);
   buffer[1]=MAIN_VOL_REG+0x01;
   Wire1.beginTransmission(DSP_ADRESS);
   Wire1.write(buffer, 6);
@@ -232,13 +233,11 @@ void dsp_i2c_set_delay(int8_t channel, int16_t delay){
   buffer[5]=(uint8_t)(delay & 0xFF);
   buffer[4]=(uint8_t)(delay >> 8) & 0xFF; 
 
-  for(int i=0; i<2; i++){
   // Base adress of the DSP = DSP_ADRESS)
   Wire1.beginTransmission(DSP_ADRESS);
   // transmitt buffer
   Wire1.write(buffer, 6);
   Wire1.endTransmission();
-  }
 
 }
 
