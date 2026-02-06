@@ -310,12 +310,54 @@ int8_t dsp_i2c_read_levelmeter(bool left_notright){
 
   //Build the final  5.23 floating point number and convert to dBFS
   readout = readout | (readbuffer[0] & 0x0000000F); //Mask out high bits and only copy low nibble
-  divreadout = readout / 8388608.0f;                //divide by 2^23 to archive 5.23 format
-  if(divreadout <= 0){                              //Mute equals 0 in registers. Log of 0 is not valid
-    return -100;                                    //Therefore set to -100 dB FS
+  
+  if(readout <= 0){                              //If upper registers are empty we need to read low register from DSP to increase dynamic range below -69 dB
+
+    if(left_notright){                           //Request Gen1x_Lo Register from DSP Trap Bank
+    transmitbuffer[2]=LEFT_VOL_REG3_HI;
+    transmitbuffer[3]=LEFT_VOL_REG3_LO;
+    }
+    else{
+      transmitbuffer[2]=RIGHT_VOL_REG3_HI;
+      transmitbuffer[3]=RIGHT_VOL_REG3_LO;
+    }
+
+    Wire1.beginTransmission(DSP_ADRESS);
+    // transmitt transmitbuffer
+    Wire1.write(transmitbuffer, 4);
+    Wire1.endTransmission();
+    Wire1.beginTransmission(DSP_ADRESS);
+    Wire1.write(transmitbuffer, 2);
+    Wire1.endTransmission(false);
+    delay(10);
+    Wire1.requestFrom(DSP_ADRESS,3);
+    //reuse the readbuffer since we already copied the needed data in the previous readout
+    readbuffer[0]=Wire1.read();
+    readbuffer[1]=Wire1.read();
+    readbuffer[2]= Wire1.read();
+    Wire1.endTransmission();
+    
+    //Now only shift readbuffers by 8 since we don't need  room for an additional nibble in this case
+    readout = readout | (readbuffer[0]<<16);
+    readout = readout | (readbuffer[1]<<8);
+    readout = readout | (readbuffer[2]);
+
+    divreadout = readout / 524288.0f;                //divide by 2^19 to archive 5.19 format
+    
+    if(divreadout <= 0)                              //Zero indicates Mute from the DSP, also log(0) can't be calculated
+      return -100;
+    else{
+      logreadout = 10*log10(divreadout);             //calculate dBFS value
+      logreadout = logreadout - 69;                  //Substract 69 since this the dynamic range of the 2^23 bit value (10*log(1/2^23)==-69,24))
+      if(logreadout <= -100)                         //Bargraph cant get below -100 so cap it here just in case
+        return -100;
+      else
+        return logreadout;                           //return value to bargraph with highest dynamic range of (10*log10(1/2^23))+(10*log10(1/2^19)) == -126,43 dB
+    }
   }
   else{
-    logreadout = 10*log10(divreadout);              //calculate dBFS value  
+    divreadout = readout / 8388608.0f;              //divide by 2^23 to archive 5.23 format
+    logreadout = 10*log10(divreadout);              //calculate dBFS value with limited range of max -69 dBFs
     return logreadout;
   }
 }
