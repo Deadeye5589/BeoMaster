@@ -15,6 +15,7 @@
 
 volatile bool in_setup_function = 0;
 volatile int16_t setup_function_value = 0;
+volatile bool softmute = 0;
 
 /* Create Arduino GFX data busses and devices */
 Arduino_DataBus *bus = new Arduino_RPiPicoSPI(DISP_DC1 /* DC */, DISP_CS1 /* CS */, DISP_CLK1 /* SCK */, DISP_DIN1 /* MOSI */, UINT8_MAX /* MISO */, spi1 /* spi */);
@@ -280,7 +281,22 @@ void onEb1Encoder(EncoderButton& eb) {
 
 
 void onEb2Clicked(EncoderButton& eb) {
-  
+  //Amp is muted, slowly restore last known volume
+  if(softmute == 1){
+    for(int i = 0; i<memory.set_volume; i+=5){
+      dsp_i2c_set_volume(i, MAIN_VOL_REG, 1);
+      delay(5);
+    }
+    dsp_i2c_set_volume(memory.set_volume, MAIN_VOL_REG, 1);
+    display_set_volume_graphics(memory.set_volume);
+    softmute = 0;
+  }
+  //Quickly mute the Amp
+  else{
+    display_set_volume_graphics(0);
+    dsp_i2c_set_volume(0, MAIN_VOL_REG, 1);
+    softmute = 1;
+  }
 }
 
 
