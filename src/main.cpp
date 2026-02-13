@@ -283,9 +283,9 @@ void onEb1Encoder(EncoderButton& eb) {
 void onEb2Clicked(EncoderButton& eb) {
   //Amp is muted, slowly restore last known volume
   if(softmute == 1){
-    for(int i = 0; i<memory.set_volume; i+=5){
+    for(int i = 100; i>memory.set_volume; i-=5){
       dsp_i2c_set_volume(i, MAIN_VOL_REG, 1);
-      delay(5);
+      delay(20);
     }
     dsp_i2c_set_volume(memory.set_volume, MAIN_VOL_REG, 1);
     display_set_volume_graphics(memory.set_volume);
@@ -293,8 +293,8 @@ void onEb2Clicked(EncoderButton& eb) {
   }
   //Quickly mute the Amp
   else{
-    display_set_volume_graphics(0);
-    dsp_i2c_set_volume(0, MAIN_VOL_REG, 1);
+    dsp_i2c_set_volume(100, MAIN_VOL_REG, 1);
+    display_set_volume_graphics(100);
     softmute = 1;
   }
 }

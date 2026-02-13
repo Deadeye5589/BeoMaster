@@ -19,7 +19,7 @@ void display_set_volume_graphics(int8_t level){
     lv_label_set_text(ui_varAmpLevel, buf);
     lv_obj_set_style_opa(ui_ImageMute, 255, 0);
   }
-  else if (level==0){
+  else if (level == 0){
     sprintf(buf, "%d", 0);
     lv_label_set_text(ui_varAmpLevel, buf);
   }
